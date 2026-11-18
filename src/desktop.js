@@ -168,6 +168,11 @@
     },
     async ready() {
       document.documentElement.classList.add('desktop');
+      // The top bar doubles as the title bar: drag it to move the window, double-click to zoom
+      document.querySelectorAll('.top, .top .logo, .top .crumb, .top .save').forEach(el => el.setAttribute('data-tauri-drag-region', ''));
+      // In full screen the window buttons are hidden, so the bar needs no room for them
+      const fs = () => { if (WIN && WIN.isFullscreen) WIN.isFullscreen().then(v => document.documentElement.classList.toggle('fullscreen', !!v)).catch(() => {}); };
+      window.addEventListener('resize', () => { clearTimeout(fs.t); fs.t = setTimeout(fs, 150); }); fs();
       setTitle();
       EV.listen('menu', e => runMenu(e.payload));
       EV.listen('open-files', async e => { for (const p of e.payload || []) await openPath(p); });
