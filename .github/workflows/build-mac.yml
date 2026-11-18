@@ -1,0 +1,66 @@
+name: Build Spot for Mac
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: build-mac
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install
+        run: npm ci
+
+      - name: Prepare the app page
+        run: node scripts/prepare.mjs
+
+      - name: Build (Intel and Apple silicon)
+        run: npx tauri build --target universal-apple-darwin
+
+      - name: Collect installer
+        run: |
+          mkdir -p out
+          cp src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg out/Spot.dmg
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Spot-mac
+          path: out/Spot.dmg
+          if-no-files-found: error
+
+      # Keep the latest installer on the "installer" branch too, so it can be fetched with git.
+      - name: Publish installer to the installer branch
+        run: |
+          cp out/Spot.dmg "$RUNNER_TEMP/Spot.dmg"
+          cd "$RUNNER_TEMP"
+          rm -rf pub && mkdir pub && cd pub
+          git init -q -b installer
+          cp "$RUNNER_TEMP/Spot.dmg" .
+          echo "Built from ${GITHUB_SHA} on $(date -u '+%Y-%m-%d %H:%M UTC')" > BUILD.txt
+          git add -A
+          git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" commit -q -m "Spot.dmg from ${GITHUB_SHA}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" installer

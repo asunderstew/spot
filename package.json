@@ -1,0 +1,19 @@
+{
+  "name": "spot",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Spot: spotting sessions for film sound, as a Mac app",
+  "scripts": {
+    "prepare-web": "node scripts/prepare.mjs",
+    "build": "node scripts/prepare.mjs && tauri build --target universal-apple-darwin"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.1.0",
+    "@fontsource/libre-franklin": "^5.0.0",
+    "@fontsource/dm-mono": "^5.0.0",
+    "jspdf": "2.5.1",
+    "pdfjs-dist": "3.11.174",
+    "mammoth": "1.6.0",
+    "xlsx": "0.18.5"
+  }
+}
