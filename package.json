@@ -1,7 +1,7 @@
 {
   "name": "spot",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Spot: spotting sessions for film sound, as a Mac app",
   "scripts": {
     "prepare-web": "node scripts/prepare.mjs",

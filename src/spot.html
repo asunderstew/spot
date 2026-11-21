@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <style>
-/* Spot. Plain edition: one family, black on white, one grey, red only for the mark and for must-haves.
+/* Spot. Plain edition: one family, black on white, one grey, red only for the mark and for high-priority notes.
    Labels hang in a left column, a rule opens each section, no boxes, no fills except department swatches. */
 :root{
   --bg:#FFFFFF; --bg-2:#F4F4F2; --ink:#111111; --grey:#555555; --line:#D4D4D0; --red:#D92E1A; --on-ink:#FFFFFF;
@@ -138,7 +138,7 @@ input.h1:hover{border-bottom-color:var(--line)}input.h1:focus{outline:none;borde
 .tabs button{border:0;background:transparent;padding:10px 0 11px;cursor:pointer;font:600 14px/1 var(--font);color:var(--grey);border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;gap:8px;align-items:baseline}
 .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
 .tabs .n{font:400 12px var(--font)}
-.qa{display:grid;grid-template-columns:130px 140px minmax(0,1fr) 110px 120px auto;gap:14px;align-items:end}
+.qa{display:grid;grid-template-columns:130px 140px minmax(0,1fr) 34px 120px auto;gap:14px;align-items:end}
 .drop{border:1px dashed var(--grey);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .drop.over{border-color:var(--ink);background:var(--bg-2)}
 .drop p{margin:0;font-size:13px;color:var(--grey)}
@@ -148,12 +148,17 @@ input.h1:hover{border-bottom-color:var(--line)}input.h1:focus{outline:none;borde
 .fb:hover{border-color:var(--grey)}
 .fb[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
 .fb .c{opacity:.65;font-family:var(--mono)}
-.note{display:grid;grid-template-columns:20px 118px 132px minmax(0,1fr) 92px 112px 24px;gap:12px;align-items:center;min-height:42px;padding:4px 0 4px 12px;border-bottom:1px solid var(--line);position:relative}
+.note{display:grid;grid-template-columns:20px 118px 132px 26px minmax(0,1fr) 112px 24px;gap:12px;align-items:center;min-height:42px;padding:4px 0 4px 12px;border-bottom:1px solid var(--line);position:relative}
 .note::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;background:var(--cc)}
 .note .in{border-bottom-color:transparent;height:30px}
 .note .in:hover{border-bottom-color:var(--line)}
 .note.done .ntx{color:var(--grey);text-decoration:line-through}
 .must{font-weight:600}
+.flag{width:26px;height:26px;padding:0;border:1px solid var(--line);background:transparent;color:var(--grey);font:700 14px/1 var(--font);cursor:pointer;flex:none}
+.flag:hover{border-color:var(--ink);color:var(--ink)}
+.flag[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#FFFFFF}
+.qa .flag{width:34px;height:34px}
+.hi{color:var(--red);font-weight:700}
 .grp{display:flex;align-items:center;gap:10px;padding:18px 0 8px;border-bottom:1px solid var(--ink)}
 .grp .h2{font-size:15px}
 .x{width:24px;height:24px;border:0;background:transparent;cursor:pointer;color:var(--grey);font-size:16px;line-height:1}
@@ -165,7 +170,7 @@ input.h1:hover{border-bottom-color:var(--line)}input.h1:focus{outline:none;borde
 .ag input[type=text]:focus{outline:none;box-shadow:0 1px 0 var(--ink)}
 .ag li.done input[type=text]{color:var(--grey);text-decoration:line-through}
 .prog{height:3px;background:var(--line)}.prog i{display:block;height:100%;background:var(--ink)}
-.roll .note{grid-template-columns:118px 46px 132px minmax(0,1fr) 112px}
+.roll .note{grid-template-columns:118px 46px 18px minmax(0,1fr) 112px}
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:36px;align-items:start}
 .mail{font:400 13px/1.6 var(--font);min-height:440px;white-space:pre-wrap}
 .warn{margin:0;padding:8px 0 8px 12px;border-left:3px solid var(--red);font-size:13px}
@@ -200,7 +205,7 @@ html.desktop .logo-mark{width:22px;height:22px}
   .sec{grid-template-columns:1fr;row-gap:10px}
   .qa{grid-template-columns:1fr 1fr}.qa .qa-note{grid-column:1/-1}
   .note{grid-template-columns:20px 110px minmax(0,1fr) 24px}
-  .note .ntx{grid-column:2/-1;grid-row:2}.note .np{grid-column:2/3;grid-row:3}.note .no{grid-column:3/5;grid-row:3}
+  .note .ntx{grid-column:2/-1;grid-row:2}.note .flag{grid-column:2/3;grid-row:3}.note .no{grid-column:3/5;grid-row:3}
   .roll .note{grid-template-columns:110px 40px minmax(0,1fr)}.roll .note .ntx{grid-column:1/-1;grid-row:2}
   .two{grid-template-columns:1fr}
 }
@@ -250,7 +255,6 @@ html.desktop .logo-mark{width:22px;height:22px}
 var CATS=[{k:"DX",l:"Dialogue",c:"--c-dx"},{k:"ADR",l:"ADR",c:"--c-adr"},{k:"FX",l:"Effects",c:"--c-fx"},{k:"FOL",l:"Foley",c:"--c-fol"},{k:"BG",l:"Ambience",c:"--c-bg"},{k:"MX",l:"Music",c:"--c-mx"},{k:"MIX",l:"Mix",c:"--c-mix"},{k:"OTH",l:"Other",c:"--c-oth"}];
 var WORDS={DX:"DX",DIA:"DX",DIAL:"DX",DIALOG:"DX",DIALOGUE:"DX",PFX:"DX",ADR:"ADR",LOOP:"ADR",LOOPING:"ADR",FX:"FX",SFX:"FX",EFX:"FX",EFFECTS:"FX",EFFECT:"FX",HFX:"FX",DESIGN:"FX",FOLEY:"FOL",FOL:"FOL",FS:"FOL",FOOTSTEPS:"FOL",BG:"BG",BGS:"BG",AMB:"BG",AMBIENCE:"BG",ATMOS:"BG",ATMO:"BG",ATMOS:"BG",MX:"MX",MUS:"MX",MUSIC:"MX",SCORE:"MX",MIX:"MIX",OTHER:"OTH",OTH:"OTH",GEN:"OTH",GENERAL:"OTH"};
 var OWNERS=["Me","Director","Editor","Composer","Producer"];
-var PRIOS=["Must","Should","Idea"];
 var TYPES=["Short film","Feature","Animation","Commercial","Documentary","Other"];
 var FPS=["23.976","24","25","29.97","30"];
 var KINDS=["Spotting","Review","Final playback"];
@@ -264,7 +268,7 @@ var AG_REVIEW=["Confirm which mix or bounce we are playing, and the picture vers
 var AG_FINAL=["Confirm picture version and mix format being played","Play the full film at reference level","Note only issues that block delivery","Agree deliverables, file names and delivery date","Confirm sign-off and who approves it in writing"];
 function agendaFor(kind,type){var l;if(kind==="Review")l=AG_REVIEW.slice();else if(kind==="Final playback")l=AG_FINAL.slice();else{l=AG_CORE.slice();if(AG_EXTRA[type])l=l.slice(0,4).concat(AG_EXTRA[type],l.slice(4));}return l.map(function(t){return {id:uid(),text:t,done:false};});}
 
-var state={projects:{},settings:{name:"Jonathan Pepe",role:"Sound designer, editor and mixer",email:"",phone:"",sign:"Best,",mode:"auto"},pid:null,sid:null,tab:"notes",filter:"all",group:"tc",openOnly:false,lastCat:"FX",mode:"loading",delArm:null};
+var state={projects:{},settings:{name:"Jonathan Pepe",role:"Sound designer, editor and mixer",email:"",phone:"",sign:"Best,",mode:"auto"},pid:null,sid:null,tab:"notes",filter:"all",group:"tc",openOnly:false,highOnly:false,lastCat:"FX",mode:"loading",delArm:null};
 var store={db:null,downloads:null,sample:null,timers:{},chains:{}};
 var DESK=window.SpotDesktop||null;
 var $=function(id){return document.getElementById(id);};
@@ -330,7 +334,7 @@ function saveSettings(){saveDoc("settings/main",function(){return state.settings
 function migrate(p){
   if(!p.sessions){p.sessions=[{id:uid(),kind:"Spotting",date:p.date||"",version:p.version||"",mode:p.mode||"In person",attendees:p.attendees||"",agenda:p.agenda||agendaFor("Spotting",p.type),notes:p.notes||[],nextSteps:p.nextSteps||""}];["date","version","mode","attendees","agenda","notes","nextSteps"].forEach(function(k){delete p[k];});}
   if(p.type==="Other narrative")p.type="Other";
-  p.sessions.forEach(function(s){s.notes.forEach(function(n){if(!n.cat)n.cat="OTH";if(n.tc==null)n.tc="";});});
+  p.sessions.forEach(function(s){s.notes.forEach(function(n){if(!n.cat)n.cat="OTH";if(n.tc==null)n.tc="";if(n.prio!==undefined){n.high=n.prio==="Must";delete n.prio;}n.high=!!n.high;});});
   ["producer","editor","composer","deliverables","brief","runtime"].forEach(function(k){if(p[k]==null)p[k]="";});
   if(!p.start)p.start="01:00:00:00";
   return p;
@@ -393,7 +397,7 @@ function renderProject(){
     h+='<section class="sec roll"><div class="lab">Still open</div><div class="sec-body">';
     CATS.forEach(function(c){var l=open.filter(function(x){return x.n.cat===c.k;});if(!l.length)return;l.sort(function(a,b){return byTC(p.fps)(a.n,b.n);});
       h+='<div class="grp" style="padding-top:4px">'+dept(c.k,c.l)+'<span class="grey" style="font-size:12px">'+l.length+"</span></div>"+
-       l.map(function(x){return '<div class="note" style="--cc:var('+c.c+')"><span class="tc">'+esc(x.n.tc||"No TC")+'</span><span class="grey">'+sesNo(p,x.s)+'</span><span class="grey">'+esc(x.n.prio)+'</span><span class="ntx'+(x.n.prio==="Must"?" must":"")+'">'+esc(x.n.text)+'</span><span class="grey">'+esc(x.n.owner)+"</span></div>";}).join("");
+       l.map(function(x){return '<div class="note" style="--cc:var('+c.c+')"><span class="tc">'+esc(x.n.tc||"No TC")+'</span><span class="grey">'+sesNo(p,x.s)+'</span><span class="hi">'+(x.n.high?"!":"")+'</span><span class="ntx'+(x.n.high?" must":"")+'">'+esc(x.n.text)+'</span><span class="grey">'+esc(x.n.owner)+"</span></div>";}).join("");
     });
     h+="</div></section>";
   }
@@ -436,7 +440,7 @@ function notesShell(){
     '<div class="f"><label for="qa-tc">Timecode</label><input class="in tc" id="qa-tc" placeholder="01023412" autocomplete="off" inputmode="numeric"></div>'+
     '<div class="f"><label for="qa-cat">Department</label><select class="in" id="qa-cat">'+opt(CATS,state.lastCat)+"</select></div>"+
     '<div class="f qa-note"><label for="qa-text">Note</label><input class="in" id="qa-text" placeholder="In the director\'s words" autocomplete="off"></div>'+
-    '<div class="f"><label for="qa-prio">Priority</label><select class="in" id="qa-prio">'+opt(PRIOS,"Should")+"</select></div>"+
+    '<button class="flag" type="button" id="qa-high" data-act="qahigh" aria-pressed="false" title="High priority" aria-label="High priority">!</button>'+
     '<div class="f"><label for="qa-owner">Owner</label><select class="in" id="qa-owner">'+opt(OWNERS,"Me")+"</select></div>"+
     '<button class="btn primary" type="submit">Add note</button></form>'+
    '<div class="bar"><div class="filters" id="filters"></div><div style="display:flex;gap:18px;align-items:center"><label class="swl"><input class="sw" type="checkbox" role="switch" id="openonly"'+(state.openOnly?" checked":"")+'>Open only</label><div class="f" style="flex-direction:row;align-items:center;gap:8px"><label for="grp">Group</label><select class="in" id="grp" style="width:140px">'+opt([{k:"tc",l:"By timecode"},{k:"cat",l:"By department"},{k:"owner",l:"By owner"}],state.group)+"</select></div></div></div>"+
@@ -447,8 +451,9 @@ function renderNotes(){
   var counts={};s.notes.forEach(function(n){counts[n.cat]=(counts[n.cat]||0)+1;});
   var f='<button class="fb" type="button" data-filter="all" aria-pressed="'+(state.filter==="all")+'">All <span class="c">'+s.notes.length+"</span></button>";
   CATS.forEach(function(c){if(counts[c.k])f+='<button class="fb" type="button" data-filter="'+c.k+'" aria-pressed="'+(state.filter===c.k)+'" title="'+esc(c.l)+'"><span class="sq" style="--cc:var('+c.c+')"></span>'+esc(c.l)+' <span class="c">'+counts[c.k]+"</span></button>";});
+  var hc=s.notes.filter(function(n){return n.high;}).length;if(hc)f+='<button class="fb" type="button" data-act="highonly" aria-pressed="'+state.highOnly+'"><b>!</b> High priority <span class="c">'+hc+"</span></button>";
   $("filters").innerHTML=f;
-  var list=s.notes.filter(function(n){return (!state.openOnly||!n.done)&&(state.filter==="all"||n.cat===state.filter);}).sort(byTC(p.fps)),h="";
+  var list=s.notes.filter(function(n){return (!state.openOnly||!n.done)&&(!state.highOnly||n.high)&&(state.filter==="all"||n.cat===state.filter);}).sort(byTC(p.fps)),h="";
   if(!s.notes.length)h='<div class="rows"><div class="empty">No notes yet. Type a timecode and a note, or import a file.</div></div>';
   else if(!list.length)h='<div class="rows"><div class="empty">Nothing matches this filter.</div></div>';
   else if(state.group==="tc")h='<div class="rows">'+list.map(noteRow).join("")+"</div>";
@@ -463,8 +468,8 @@ function noteRow(n){var c=cat(n.cat);
    '<input class="ck" type="checkbox" id="nd-'+n.id+'" data-n="'+n.id+'" data-k="done"'+(n.done?" checked":"")+' aria-label="Done">'+
    '<input class="in tc" id="nt-'+n.id+'" data-n="'+n.id+'" data-k="tc" value="'+esc(n.tc)+'" placeholder="No TC" aria-label="Timecode">'+
    '<select class="in" id="nc-'+n.id+'" data-n="'+n.id+'" data-k="cat" aria-label="Department">'+opt(CATS,n.cat)+"</select>"+
-   '<input class="in ntx'+(n.prio==="Must"?" must":"")+'" id="nx-'+n.id+'" data-n="'+n.id+'" data-k="text" value="'+esc(n.text)+'" aria-label="Note">'+
-   '<select class="in np" id="np-'+n.id+'" data-n="'+n.id+'" data-k="prio" aria-label="Priority">'+opt(PRIOS,n.prio)+"</select>"+
+   '<button class="flag" type="button" data-flag="'+n.id+'" aria-pressed="'+!!n.high+'" title="High priority" aria-label="High priority">!</button>'+
+   '<input class="in ntx'+(n.high?" must":"")+'" id="nx-'+n.id+'" data-n="'+n.id+'" data-k="text" value="'+esc(n.text)+'" aria-label="Note">'+
    '<select class="in no" id="no-'+n.id+'" data-n="'+n.id+'" data-k="owner" aria-label="Owner">'+opt(OWNERS,n.owner)+"</select>"+
    '<button class="x" type="button" data-ndel="'+n.id+'" aria-label="Delete note">×</button></div>';
 }
@@ -498,11 +503,12 @@ var TCRX=/(\d{1,2}[:;.]\d{2}[:;.]\d{2}[:;.]\d{2}|\d{1,2}:\d{2}:\d{2}|\b\d{1,3}:\
 function guessTrack(track){var up=String(track||"").toUpperCase(),w=up.split(/[^A-Z]+/).filter(Boolean),k=null;for(var i=0;i<w.length;i++){if(WORDS[w[i]]){k=WORDS[w[i]];break;}}return {isNotes:/NOTE|SPOT/.test(up),cat:k};}
 function cleanName(t){return String(t||"").replace(/\.grp$/i,"").replace(/\.(L|R|C|Ls|Rs|Lfe|Lss|Rss|Lsr|Rsr)$/i,"").replace(/-\d{2,3}$/,"").trim();}
 function splitNote(text,fallback){
-  var prio=null,t=cleanName(text);
-  if(/!+$/.test(t)){prio="Must";t=t.replace(/\s*!+$/,"");}
+  var high=false,t=cleanName(text);
+  if(/!+$/.test(t)){high=true;t=t.replace(/\s*!+$/,"");}
+  if(/^!+\s*/.test(t)){high=true;t=t.replace(/^!+\s*/,"");}
   var m=t.match(/^[\[(]?\s*([A-Za-z]{2,9})\s*[\])]?\s*[:\-–]\s*(.+)$/);
-  if(m&&WORDS[m[1].toUpperCase()])return {cat:WORDS[m[1].toUpperCase()],text:m[2].trim(),prio:prio};
-  return {cat:fallback,text:t,prio:prio};
+  if(m&&WORDS[m[1].toUpperCase()])return {cat:WORDS[m[1].toUpperCase()],text:m[2].trim(),high:high};
+  return {cat:fallback,text:t,high:high};
 }
 function proToolsText(raw){
   var lines=String(raw||"").split(/\r\n|\r|\n/),items=[],fmt=null,track=null,section="",hdr=null,seen={},TC=/^(\d{1,2}[:;]\d{2}[:;]\d{2}[:;]\d{2})/;
@@ -536,13 +542,13 @@ function fromRows(rows,p){
   var out=[];
   if(hi>=0){rows.slice(hi+1).forEach(function(r){var raw=r[col.tc]||"",text=r[col.text]||"";if(!text)return;
     var m=String(raw).match(TCRX),tc=m?docTC(m[1],p.fps,p.start):"";
-    var k=col.cat!=null?guessTrack(r[col.cat]).cat:null,pr=col.prio!=null?normPrio(r[col.prio]):null,ow=col.owner!=null?normOwner(r[col.owner]):null;
-    out.push({tc:tc||"",text:text,cat:k,prio:pr,owner:ow});});
+    var k=col.cat!=null?guessTrack(r[col.cat]).cat:null,pr=col.prio!=null?normHigh(r[col.prio]):false,ow=col.owner!=null?normOwner(r[col.owner]):null;
+    out.push({tc:tc||"",text:text,cat:k,high:pr,owner:ow});});
     return out;
   }
   return fromLines(rows.map(function(r){return r.filter(Boolean).join("  ");}),p);
 }
-function normPrio(v){v=String(v||"").toLowerCase();if(/must|high|urgent|critical|1/.test(v))return "Must";if(/idea|low|maybe|optional|3/.test(v))return "Idea";if(v)return "Should";return null;}
+function normHigh(v){v=String(v||"").trim().toLowerCase();return /^(!+|y|yes|x|1|true)$/.test(v)||/high|urgent|critical|must/.test(v);}
 function normOwner(v){v=String(v||"").toLowerCase();for(var i=0;i<OWNERS.length;i++)if(v.indexOf(OWNERS[i].toLowerCase())>-1)return OWNERS[i];if(/sound|me|jonathan/.test(v))return "Me";return null;}
 /* free lines: each line with a time becomes a note; lines below it without a time continue it */
 function fromLines(lines,p){
@@ -550,26 +556,26 @@ function fromLines(lines,p){
   lines.forEach(function(raw){var line=String(raw).replace(/^[\s\-•*–]+/,"").replace(/^\d{1,3}[.)]\s+/,"").trim();if(!line)return;
     var m=line.match(TCRX);
     if(m&&m.index<12){var tc=docTC(m[1],p.fps,p.start);var rest=line.slice(m.index+m[1].length).replace(/^[\s\-–:,|]+/,"").trim();
-      if(tc&&rest){cur={tc:tc,text:rest,cat:section,prio:null,owner:null};out.push(cur);return;}}
+      if(tc&&rest){cur={tc:tc,text:rest,cat:section,high:false,owner:null};out.push(cur);return;}}
     var g=guessTrack(line);if(line.length<30&&g.cat&&!m){section=g.cat;cur=null;return;}
     if(cur&&line.length<220&&!/^[A-Z ]{6,}$/.test(line))cur.text+=" "+line;
   });
   return out;
 }
 var IMPORT_PROMPT="You turn a film director's sound notes into a clean list for a sound designer.\n"+
- "Return ONLY a JSON array. Each element: {\"tc\": string, \"dept\": string, \"text\": string, \"prio\": string, \"owner\": string}.\n"+
+ "Return ONLY a JSON array. Each element: {\"tc\": string, \"dept\": string, \"text\": string, \"high\": boolean, \"owner\": string}.\n"+
  "- tc: timecode as HH:MM:SS:FF at FPS fps. The film starts at START. A time written as minutes:seconds or as a running time is measured from the start of the film, so add it to START. A full HH:MM:SS:FF timecode stays as written. Use \"\" when the note has no time.\n"+
  "- dept: one of DX (dialogue), ADR, FX (sound effects, design), FOL (Foley), BG (ambience, atmos, backgrounds), MX (music, score), MIX (levels, balance, panning, loudness), OTH (anything else).\n"+
  "- text: the note itself, short and in the author's words, without the time. Split a paragraph that asks for several things into several notes. Skip greetings, sign-offs and anything that is not a request or observation about the sound.\n"+
- "- prio: Must when the author insists or says it is essential, Idea when they only suggest or wonder, otherwise Should.\n"+
+ "- high: true only when the author insists, says it is essential or urgent, otherwise false.\n"+
  "- owner: Me for work the sound designer does. Director, Editor, Composer or Producer when the note asks that person to act.\n"+
- "Example: [{\"tc\":\"01:02:05:20\",\"dept\":\"FX\",\"text\":\"Engine should feel like a heartbeat under the deck\",\"prio\":\"Must\",\"owner\":\"Me\"}]\n\nNOTES:\n";
+ "Example: [{\"tc\":\"01:02:05:20\",\"dept\":\"FX\",\"text\":\"Engine should feel like a heartbeat under the deck\",\"high\":true,\"owner\":\"Me\"}]\n\nNOTES:\n";
 async function readWithClaude(text,p,signal){
   var prompt=IMPORT_PROMPT.replace("FPS",p.fps).replace("START",p.start||"01:00:00:00")+text.slice(0,60000);
   var arr=await store.sample.json(prompt,{signal:signal,modelTier:"default"});
   if(!Array.isArray(arr))throw {code:"invalid_json"};
   return arr.map(function(o){o=o||{};var k=String(o.dept||"").toUpperCase();
-    return {tc:o.tc?(normTC(String(o.tc),p.fps)||docTC(String(o.tc),p.fps,p.start)||""):"",text:String(o.text||"").trim(),cat:WORDS[k]||(CATS.some(function(c){return c.k===k;})?k:"OTH"),prio:PRIOS.indexOf(o.prio)>-1?o.prio:"Should",owner:OWNERS.indexOf(o.owner)>-1?o.owner:"Me"};
+    return {tc:o.tc?(normTC(String(o.tc),p.fps)||docTC(String(o.tc),p.fps,p.start)||""):"",text:String(o.text||"").trim(),cat:WORDS[k]||(CATS.some(function(c){return c.k===k;})?k:"OTH"),high:o.high===true||o.high==="true",owner:OWNERS.indexOf(o.owner)>-1?o.owner:"Me"};
   }).filter(function(o){return o.text;});
 }
 
@@ -626,7 +632,7 @@ function impNotes(){
       var tc=imp.kind==="ptx"?fTC(b0+i.samples/i.rate*parseFloat(p.fps),p.fps):(i.tc?normTC(i.tc,p.fps)||"":"");
       var fb=imp.srcMode==="cat"?x.as:x.as,sn=splitNote(i.text,fb);if(!sn.text)return;
       if(imp.srcMode==="cat")sn.cat=x.as;
-      out.push({tc:tc,cat:sn.cat,text:sn.text,prio:sn.prio||i.prio||"Should",owner:i.owner||"Me"});
+      out.push({tc:tc,cat:sn.cat,text:sn.text,high:!!(sn.high||i.high),owner:i.owner||"Me"});
     });
   });
   return out.sort(byTC(p.fps));
@@ -647,13 +653,13 @@ function renderImport(){
    imp.srcs.map(function(x,i){return '<div class="r mapr"><span style="font-weight:600;overflow-wrap:anywhere">'+esc(x.label)+"</span><span>"+x.items.length+'</span><span class="grey" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(cleanName(x.items[0].text))+'</span><span style="display:flex;align-items:center;gap:10px">'+(x.as==="SKIP"?'<span class="sq" style="--cc:transparent;box-shadow:inset 0 0 0 1px var(--grey)"></span>':'<span class="sq" style="--cc:var('+cat(x.as).c+')"></span>')+'<select class="in" id="map-'+i+'" data-map="'+i+'" aria-label="What '+esc(x.label)+' holds">'+opt(opts,x.as)+"</select></span></div>";}).join("")+"</div></div></div></section>";
   h+='<section class="sec"><div class="lab">Preview</div><div class="sec-body"><div class="bar"><span class="hint">'+notes.length+(notes.length===1?" note":" notes")+(noTC?", "+noTC+" without a timecode":"")+". A code at the start of a note, like ADR:, overrides its group.</span>"+
    (imp.kind==="doc"&&store.sample?'<button class="btn sm" type="button" data-act="impclaude">'+(imp.by==="claude"?"Read again with Claude":"Read with Claude")+"</button>":"")+
-   '</div><div class="scroll-x"><div class="rows">'+(notes.length?notes.slice(0,10).map(function(n){return '<div class="r prer"><span class="tc">'+esc(n.tc||"No TC")+"</span>"+dept(n.cat,cat(n.cat).l)+'<span class="'+(n.prio==="Must"?"must":"")+'">'+esc(n.text)+'</span><span class="grey">'+esc(n.owner)+"</span></div>";}).join("")+(notes.length>10?'<div class="r prer grey"><span></span><span></span><span>and '+(notes.length-10)+" more</span><span></span></div>":""):'<div class="empty">'+(imp.kind==="doc"&&!store.sample?"No timecoded lines found. Spot reads lines that start with a timecode, or a table with timecode and note columns.":"Nothing to add.")+"</div>")+"</div></div></div></section></div>";
+   '</div><div class="scroll-x"><div class="rows">'+(notes.length?notes.slice(0,10).map(function(n){return '<div class="r prer"><span class="tc">'+esc(n.tc||"No TC")+"</span>"+dept(n.cat,cat(n.cat).l)+'<span class="'+(n.high?"must":"")+'">'+(n.high?'<span class="hi">! </span>':"")+esc(n.text)+'</span><span class="grey">'+esc(n.owner)+"</span></div>";}).join("")+(notes.length>10?'<div class="r prer grey"><span></span><span></span><span>and '+(notes.length-10)+" more</span><span></span></div>":""):'<div class="empty">'+(imp.kind==="doc"&&!store.sample?"No timecoded lines found. Spot reads lines that start with a timecode, or a table with timecode and note columns.":"Nothing to add.")+"</div>")+"</div></div></div></section></div>";
   h+='<div class="dlg-f"><span class="grow">Notes are added to '+sesNo(p,s)+" "+esc(s.kind)+'.</span><button class="btn ghost" type="button" data-act="impcancel">Cancel</button><button class="btn primary" type="button" data-act="impadd"'+(notes.length?"":" disabled")+">Add "+notes.length+(notes.length===1?" note":" notes")+"</button></div>";
   $("imp-root").innerHTML=h;
 }
 function commitImport(){
   var p=P(),s=S();if(!imp||!s)return;var have={};s.notes.forEach(function(n){have[n.tc+"|"+n.text]=1;});var add=0,dup=0;
-  impNotes().forEach(function(n){var k=n.tc+"|"+n.text;if(have[k]){dup++;return;}have[k]=1;s.notes.push({id:uid(),tc:n.tc,cat:n.cat,text:n.text,prio:n.prio,owner:n.owner,done:false});add++;});
+  impNotes().forEach(function(n){var k=n.tc+"|"+n.text;if(have[k]){dup++;return;}have[k]=1;s.notes.push({id:uid(),tc:n.tc,cat:n.cat,text:n.text,high:n.high,owner:n.owner,done:false});add++;});
   if(imp.kind==="ptx"){var st=normTC(imp.start,p.fps);if(st)p.start=st;}
   touch();imp=null;$("dlg-import").close();state.filter="all";renderNotes();refreshTabs();toast(add+(add===1?" note added":" notes added")+(dup?", "+dup+" were already there":"")+".");
 }
@@ -662,16 +668,16 @@ function commitImport(){
 function recapData(p,s){
   var notes=s.notes.slice().sort(byTC(p.fps)),idx=p.sessions.indexOf(s),prior=[];
   p.sessions.forEach(function(x,i){if(i<idx)x.notes.forEach(function(n){if(!n.done)prior.push(n);});});
-  return {notes:notes,prior:prior.sort(byTC(p.fps)),must:notes.filter(function(n){return n.prio==="Must";}).length,theirs:notes.filter(function(n){return n.owner!=="Me"&&!n.done;}),
+  return {notes:notes,prior:prior.sort(byTC(p.fps)),must:notes.filter(function(n){return n.high;}).length,theirs:notes.filter(function(n){return n.owner!=="Me"&&!n.done;}),
     groups:CATS.map(function(c){return {c:c,list:notes.filter(function(n){return n.cat===c.k;})};}).filter(function(g){return g.list.length;})};
 }
-function tagOf(n){return n.prio==="Must"?" [must]":n.prio==="Idea"?" [idea to try]":"";}
+function tagOf(n){return n.high?" [high priority]":"";}
 function recapText(p,s){
   var d=recapData(p,s),st=state.settings,first=(p.director||"").trim().split(/[\s,]+/)[0]||"there",L=[];
   L.push("Hi "+first+",","");
   L.push("Thanks for the "+s.kind.toLowerCase()+" session on "+p.title+(s.date?" on "+longDate(s.date):"")+". Here is everything we agreed, by department, so you can check I have understood you correctly.","");
   var pic=[s.version,p.fps+" fps"].filter(Boolean).join(", ");L.push("Picture: "+pic);
-  L.push("Notes from this session: "+d.notes.length+", of which "+d.must+" must-haves.","");
+  L.push("Notes from this session: "+d.notes.length+(d.must?", "+d.must+" high priority.":"."),"");
   if(d.theirs.length){L.push("WHAT I NEED FROM YOU AND THE TEAM");d.theirs.forEach(function(n){L.push("- "+(n.tc||"General")+"  "+n.text+" ("+n.owner+")");});L.push("");}
   d.groups.forEach(function(g){L.push(g.c.l.toUpperCase());g.list.forEach(function(n){L.push("- "+(n.tc||"General")+"  "+n.text+tagOf(n)+(n.done?" [done]":""));});L.push("");});
   if(d.prior.length)L.push("Still open from earlier sessions: "+d.prior.length+" notes, listed on the PDF.","");
@@ -696,8 +702,8 @@ function makePDF(p,s){
   function c(a){doc.setTextColor(a[0],a[1],a[2]);}
   function ensure(h){if(y+h>277){doc.addPage();y=22;}}
   function section(label){ensure(16);y+=6;doc.setDrawColor(17);doc.setLineWidth(0.35);doc.line(M,y,W-M,y);y+=5;doc.setFont("helvetica","bold");doc.setFontSize(7.5);c(INK);doc.text(clean(label).toUpperCase(),M,y,{charSpace:0.5});}
-  function line(n,right,first){doc.setFont("helvetica",n.prio==="Must"?"bold":"normal");doc.setFontSize(10);var lines=doc.splitTextToSize(clean(n.text),W-M-X-30),h=lines.length*4.5+2.2;if(!first)ensure(h);
-    doc.setFont("courier","normal");doc.setFontSize(8.5);c(GREY);doc.text(n.tc||"General",X,y);doc.setFont("helvetica",n.prio==="Must"?"bold":"normal");doc.setFontSize(10);c(INK);doc.text(lines,X+27,y);
+  function line(n,right,first){doc.setFont("helvetica",n.high?"bold":"normal");doc.setFontSize(10);var lines=doc.splitTextToSize(clean(n.text),W-M-X-30),h=lines.length*4.5+2.2;if(!first)ensure(h);
+    doc.setFont("courier","normal");doc.setFontSize(8.5);c(GREY);doc.text(n.tc||"General",X,y);if(n.high){doc.setFont("helvetica","bold");doc.setFontSize(10);c(INK);doc.text("!",X+24,y);}doc.setFont("helvetica",n.high?"bold":"normal");doc.setFontSize(10);c(INK);doc.text(lines,X+27,y);
     doc.setFont("helvetica","normal");doc.setFontSize(8);c(GREY);doc.text(clean(right),W-M,y,{align:"right"});c(INK);y+=h;}
   function block(label,list,right){section(label);list.forEach(function(n,i){line(n,right(n),i===0);});}
   y=26;doc.setFont("helvetica","bold");doc.setFontSize(20);c(INK);doc.text(clean(st.name||""),M,y);
@@ -706,10 +712,10 @@ function makePDF(p,s){
   y+=13;doc.setFont("helvetica","italic");doc.setFontSize(17);var tl=doc.splitTextToSize(clean(p.title),W-2*M);doc.text(tl,M,y);y+=tl.length*7;
   doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text(clean(sesNo(p,s)+" "+s.kind+" notes"),M,y);y+=3;
   section("Session");
-  [["Date",longDate(s.date)],["Picture",[s.version,p.fps+" fps"].filter(Boolean).join(", ")],["Held",s.mode],["Present",s.attendees],["Director",p.director],["Notes",d.notes.length+" this session, "+d.must+" must-haves"]].filter(function(f){return f[1];}).forEach(function(f,i){if(i)ensure(5);doc.setFont("helvetica","normal");doc.setFontSize(8);c(GREY);doc.text(f[0],X,y);doc.setFontSize(10);c(INK);var l=doc.splitTextToSize(clean(f[1]),W-M-X-27);doc.text(l,X+27,y);y+=l.length*4.5+1.5;});
+  [["Date",longDate(s.date)],["Picture",[s.version,p.fps+" fps"].filter(Boolean).join(", ")],["Held",s.mode],["Present",s.attendees],["Director",p.director],["Notes",d.notes.length+" this session"+(d.must?", "+d.must+" high priority":"")]].filter(function(f){return f[1];}).forEach(function(f,i){if(i)ensure(5);doc.setFont("helvetica","normal");doc.setFontSize(8);c(GREY);doc.text(f[0],X,y);doc.setFontSize(10);c(INK);var l=doc.splitTextToSize(clean(f[1]),W-M-X-27);doc.text(l,X+27,y);y+=l.length*4.5+1.5;});
   if(d.theirs.length)block("Needed from you",d.theirs,function(n){return n.owner;});
-  d.groups.forEach(function(g){block(g.c.l,g.list,function(n){return (n.done?"Done":n.prio)+(n.owner!=="Me"?", "+n.owner:"");});});
-  if(d.prior.length)block("Still open, earlier",d.prior,function(n){return cat(n.cat).l+", "+n.prio;});
+  d.groups.forEach(function(g){block(g.c.l,g.list,function(n){return [n.done?"Done":"",n.owner!=="Me"?n.owner:""].filter(Boolean).join(", ");});});
+  if(d.prior.length)block("Still open, earlier",d.prior,function(n){return cat(n.cat).l;});
   if((s.nextSteps||"").trim()){section("Next steps");doc.setFont("helvetica","normal");doc.setFontSize(10);c(INK);doc.splitTextToSize(clean(s.nextSteps.trim()),W-M-X).forEach(function(l,i){if(i)ensure(5);doc.text(l,X,y);y+=4.8;});}
   var pages=doc.getNumberOfPages();for(var i=1;i<=pages;i++){doc.setPage(i);doc.setFont("helvetica","normal");doc.setFontSize(8);c(GREY);doc.text(clean((st.name||"")+"  ·  "+p.title+"  ·  "+sesNo(p,s)),M,287);doc.text("Page "+i+" of "+pages,W-M,287,{align:"right"});}
   return doc.output("blob");
@@ -747,13 +753,14 @@ window.SpotApp={state:state,render:render,newProject:newProject,addProjects:addP
 
 /* ---------- events ---------- */
 document.addEventListener("click",function(e){
-  var t=e.target.closest("[data-act],[data-proj],[data-sess],[data-tab],[data-filter],[data-ndel],[data-agdel],[data-mode]");if(!t)return;
+  var t=e.target.closest("[data-act],[data-proj],[data-sess],[data-tab],[data-filter],[data-ndel],[data-agdel],[data-mode],[data-flag]");if(!t)return;
   if(t.closest("#modeseg")){var m=t.dataset.mode;applyMode(m);try{localStorage.setItem("spot-mode",m);}catch(x){}state.settings.mode=m;saveSettings();return;}
   var p=P(),s=S(),a=t.dataset.act;
   if(t.dataset.proj){state.pid=t.dataset.proj;state.sid=null;state.delArm=null;render();$("main").scrollTop=0;return;}
   if(t.dataset.sess){state.sid=t.dataset.sess;state.tab=S()&&S().notes.length?"notes":"prep";state.filter="all";state.delArm=null;render();$("main").scrollTop=0;return;}
   if(t.dataset.tab){state.tab=t.dataset.tab;state.delArm=null;refreshTabs();renderPanel();return;}
   if(t.dataset.filter){state.filter=t.dataset.filter;renderNotes();return;}
+  if(t.dataset.flag&&s){var fn=s.notes.find(function(x){return x.id===t.dataset.flag;});if(fn){fn.high=!fn.high;touch();renderNotes();}return;}
   if(t.dataset.ndel&&s){s.notes=s.notes.filter(function(n){return n.id!==t.dataset.ndel;});touch();renderNotes();refreshTabs();return;}
   if(t.dataset.agdel&&s){s.agenda=s.agenda.filter(function(x){return x.id!==t.dataset.agdel;});touch();renderPanel();refreshTabs();return;}
   switch(a){
@@ -766,6 +773,8 @@ document.addEventListener("click",function(e){
     case "restore":$("restore-file").click();break;
     case "reveal":if(DESK&&p)DESK.reveal(p.id);break;
     case "saveas":if(DESK&&p)DESK.saveAs(p);break;
+    case "qahigh":t.setAttribute("aria-pressed",String(t.getAttribute("aria-pressed")!=="true"));break;
+    case "highonly":state.highOnly=!state.highOnly;renderNotes();break;
     case "agreset":if(s){s.agenda=agendaFor(s.kind,p.type);touch();renderPanel();refreshTabs();}break;
     case "delproj":if(state.delArm!=="p"){state.delArm="p";renderProject();break;}
       var id=p.id;delete state.projects[id];state.delArm=null;if(state.mode==="cloud"||DESK)saveDoc("projects/"+id,function(){return null;});else persistLocal();state.pid=sortedIds()[0]||null;state.sid=null;render();break;
@@ -790,7 +799,7 @@ document.addEventListener("submit",function(e){
   if(f.dataset.form==="note"){var raw=$("qa-tc").value.trim(),tc=raw?normTC(raw,p.fps):"",text=$("qa-text").value.trim();
     if(tc===null){toast("Not a valid timecode at "+p.fps+" fps. Type 01023412 or 01:02:34:12, or leave it empty.");$("qa-tc").focus();return;}
     if(!text){$("qa-text").focus();return;}state.lastCat=$("qa-cat").value;
-    s.notes.push({id:uid(),tc:tc,cat:state.lastCat,text:text,prio:$("qa-prio").value,owner:$("qa-owner").value,done:false});
+    s.notes.push({id:uid(),tc:tc,cat:state.lastCat,text:text,high:$("qa-high").getAttribute("aria-pressed")==="true",owner:$("qa-owner").value,done:false});$("qa-high").setAttribute("aria-pressed","false");
     touch();$("qa-tc").value="";$("qa-text").value="";renderNotes();refreshTabs();$("qa-tc").focus();}
 });
 document.addEventListener("input",function(e){
